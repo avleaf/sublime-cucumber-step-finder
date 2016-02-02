@@ -13,7 +13,6 @@ class InsertStepCommand(sublime_plugin.TextCommand):
 
 
   def run(self, edit, **args):
-    # import pdb, sys; pdb.Pdb(stdout=sys.__stdout__).set_trace()
     for region in self.view.sel():
       if region.empty():
         continue
@@ -21,55 +20,7 @@ class InsertStepCommand(sublime_plugin.TextCommand):
         line = self.view.line(region)
         line_contents = clean_step(args['step_text']) + '\n'
         self.view.insert(edit, line.end(), line_contents)
-          # self.view.insert(edit, region.begin(), self.view.substr(region))
 
-# class StepDefsCompletions(sublime_plugin.EventListener):
-#     def on_query_completions(self, view, prefix, locations):
-        
-#         return self.list_steps()
-
-#     def settings_get(self, name):
-#       # Get the plugin settings, default and user-defined.
-#       plugin_settings = sublime.load_settings('CucumberStepFinder.sublime-settings')
-#       # If this is a project, try to grab project-specific settings.
-#       if sublime.active_window() and sublime.active_window().active_view():
-#         project_settings = sublime.active_window().active_view().settings().get("CucumberStepFinder")
-#       else:
-#         project_settings = None
-#       # Grab the setting, by name, from the project settings if it exists.
-#       # Otherwise, default back to the plugin settings.
-#       return (project_settings or {}).get(name, plugin_settings.get(name))
-
-      
-#     def find_all_steps(self):
-#       features_path = self.settings_get('cucumber_features_path')
-#       step_pattern = self.settings_get('cucumber_step_pattern')
-#       pattern = re.compile(r'((.*)(\/\^.*))\$\/')
-#       self.steps = []
-#       folders = self.window.folders()
-#       for folder in folders:
-#         if ( not os.path.exists(folder) ) : continue
-#         for path in os.listdir(folder) + ['.']:
-#           full_path = os.path.join(folder, path)
-#           if path == features_path:
-#             self.step_files = []
-#             for root, dirs, files in os.walk(full_path, followlinks=True):
-#               for f_name in files:
-#                 if re.match(step_pattern, f_name):
-#                   self.step_files.append((f_name, os.path.join(root, f_name)))
-#                   step_file_path = os.path.join(root, f_name)
-#                   with codecs.open(step_file_path, encoding='utf-8') as f:
-#                     index = 0
-#                     for line in f:
-#                       match = re.match(pattern, line)
-#                       if match:
-#                         self.steps.append((match.group(), index, step_file_path))
-#                       index += 1
-
-#     def list_steps(self):
-#       self.find_all_steps()
-#       steps_only = [clean_step(x[0]) for x in self.steps]
-#       return steps_only
 
 
 
@@ -143,9 +94,11 @@ class CucumberBaseCommand(sublime_plugin.WindowCommand, object):
       # import pdb, sys; pdb.Pdb(stdout=sys.__stdout__).set_trace()
       file_path = self.steps[index][2]
       self.window.active_view().run_command("insert_step",{"step_text": self.steps[index][0]})
-      other_pane = self.determine_other_pane()
 
-      self.window.focus_group(other_pane)
+      open_in_different_pane = self.settings_get('open_in_different_pane')
+      if open_in_different_pane:
+        other_pane = self.determine_other_pane()
+        self.window.focus_group(other_pane)
       match_view = self.window.open_file(file_path)
       self.active_ref = (match_view, self.steps[index][1])
       self.mark_step()
