@@ -11,8 +11,8 @@ on a step in the features file
 
 #Installation
 ## Mac OSX (manual)
-    cd ~/Library/Application\ Support/Sublime\ Text\ 3/Packages
-    git clone git://github.com/danielfrey/sublime-cucumber-step-finder.git CucumberStepFinder
+    cd ~/Library/Application\ Support/Sublime\ Text\ 3/Packages/User
+    git clone git://github.com/tmulry/sublime-cucumber-step-finder.git CucumberStepFinder
 
 ## Linux/Windows
 Not tested yet. Contributions are welcome. If keyboard settings are provided, it should work.
